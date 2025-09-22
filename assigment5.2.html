@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hide Image Example</title>
+  <style>
+    #myImage {
+      max-width: 300px;
+      margin-bottom: 10px;
+    }
+
+    #hideBtn {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <img id="myImage" src="abes.jpg" alt="Sample Image">
+
+  <br>
+
+  <button id="hideBtn">Hide</button>
+
+  <script>
+    const image = document.getElementById("myImage");
+    const button = document.getElementById("hideBtn");
+
+    button.addEventListener("click", function() {
+      image.style.display = "none";
+    });
+  </script>
+
+</body>
+</html>

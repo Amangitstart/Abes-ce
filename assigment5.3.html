@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Change Image Example</title>
+  <style>
+    #myImage {
+      max-width: 300px;
+      margin-bottom: 10px;
+    }
+
+    #changeBtn {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <img id="myImage" src="ronladowallpaper.png.jpg" alt="Photo 1">
+
+  <br>
+
+  <button id="changeBtn">Change</button>
+
+  <script>
+    const image = document.getElementById("myImage");
+    const button = document.getElementById("changeBtn");
+
+    const image1 = "abes.jpg";
+    const image2 = "";
+
+    let showingFirstImage = true;
+
+    button.addEventListener("click", function() {
+      if (showingFirstImage) {
+        image.src = image2;
+      } else {
+        image.src = image1;
+      }
+      showingFirstImage = !showingFirstImage;
+    });
+  </script>
+
+</body>
+</html>
