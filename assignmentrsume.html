@@ -1,31 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<title>Resume Generator (Photo First)</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; background: #f7f7f7; }
+  .container { display: flex; gap: 20px; flex-wrap: wrap; }
+  .form, .resume { background: #fff; padding: 20px; border-radius: 8px; width: 400px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  input, textarea { width: 100%; margin: 8px 0; padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
+  button { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+  img { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; margin-top: 10px; }
+  h2 { margin-top: 0; }
+</style>
 </head>
 <body>
-    <div class="container" id="form-container">
-    <h2>Resume</h2>
-    <form id="resumeForm">
-      <label><h1>Aman mishra</h1></label>
-      <input type="text" id="name" placeholder="Enter your name" >,<br>
 
-      <label>Class / Education</label>
-      <input type="text" id="class" placeholder="e.g. B.Tech" > <br>
+<h1>Resume Generator</h1>
+<div class="container">
 
-      <label>Skills</label> <br>
-      <input type="text" id="skills" placeholder=" HTML, CSS, JS"> <br>
-      <label>Skills</label>
-      <input type="text" id="skills" placeholder="Enter your address"> <br>
 
-      <label>Address</label>
-      <textarea id="address" placeholder="Enter your address"></textarea><br>
+  <div class="form">
+    <label>Upload Your Photo</label>
+    <input type="file" id="photoInput" accept="image/*">
+    <img id="previewPhoto" src="" alt="Your Photo" style="display:none">
 
-      <button type="submit">Submit</button><br>
-    </form>
+    <label>Full Name</label>
+    <input type="text" id="name">
+
+    <label>Job Title</label>
+    <input type="text" id="title">
+
+    <label>Contact (Email / Phone)</label>
+    <input type="text" id="contact">
+
+    <label>Summary</label>
+    <textarea id="summary"></textarea>
+
+    <label>Skills (comma separated)</label>
+    <input type="text" id="skills">
+
+    <label>Experience</label>
+    <textarea id="experience"></textarea>
+
+    <label>Education</label>
+    <input type="text" id="education">
+
+    <button onclick="generateResume()">Generate Resume</button>
   </div>
 
+  <div class="resume" id="resume">
+    <img id="rPhoto" src="" alt="Photo" style="display:none">
+    <h2 id="rName">Your Name</h2>
+    <h3 id="rTitle">Job Title</h3>
+    <p id="rContact">Email • Phone</p>
+    <h3>Summary</h3>
+    <p id="rSummary"></p>
+    <h3>Skills</h3>
+    <p id="rSkills"></p>
+    <h3>Experience</h3>
+    <p id="rExperience"></p>
+    <h3>Education</h3>
+    <p id="rEducation"></p>
+  </div>
+
+</div>
+
+<script>
+  
+  const photoInput = document.getElementById('photoInput');
+  const previewPhoto = document.getElementById('previewPhoto');
+  const rPhoto = document.getElementById('rPhoto');
+
+  photoInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      previewPhoto.src = reader.result;
+      previewPhoto.style.display = 'block';
+      rPhoto.src = reader.result;
+      rPhoto.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  });
+
+
+  function generateResume() {
+    document.getElementById('rName').innerText = document.getElementById('name').value;
+    document.getElementById('rTitle').innerText = document.getElementById('title').value;
+    document.getElementById('rContact').innerText = document.getElementById('contact').value;
+    document.getElementById('rSummary').innerText = document.getElementById('summary').value;
+    document.getElementById('rSkills').innerText = document.getElementById('skills').value;
+    document.getElementById('rExperience').innerText = document.getElementById('experience').value;
+    document.getElementById('rEducation').innerText = document.getElementById('education').value;
+  }
+</script>
+
 </body>
-</html>
+</html>\
