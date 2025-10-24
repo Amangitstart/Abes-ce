@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AMAN MISHRa — Portfolio</title>
+    <meta name="description" content="Portfolio of AMAN MISHRa — developer crafting clean, fast, and accessible web experiences." />
+    <meta name="theme-color" content="#0ea5e9" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="script.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav container">
+        <a href="#home" class="brand" aria-label="AMAN MISHRa">AMAN MISHRa</a>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <ul class="nav-links" id="navLinks">
+          <li><a class="nav-link active" href="#home">Home</a></li>
+          <li><a class="nav-link" href="#about">About</a></li>
+          <li><a class="nav-link" href="#skills">Skills</a></li>
+          <li><a class="nav-link" href="#projects">Projects</a></li>
+          <li><a class="nav-link" href="#contact">Contact</a></li>
+          <li>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode">
+              <span class="icon-sun" aria-hidden="true">☀️</span>
+              <span class="icon-moon" aria-hidden="true">🌙</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="home" class="section hero" tabindex="-1">
+      <div class="container hero-grid">
+        <div class="hero-text">
+          <p class="eyebrow">Hello, I'm</p>
+          <h1 class="title">AMAN MISHRa</h1>
+          <p class="subtitle">Developer focused on building clean, accessible, and fast web apps.</p>
+          <div class="cta-row">
+            <a href="#projects" class="btn btn-primary">View Projects</a>
+            <a href="#contact" class="btn btn-secondary">Contact Me</a>
+          </div>
+        </div>
+        <div class="hero-media">
+          <div class="photo-frame">
+            <img src="abes.jpg" alt="Portrait of AMAN MISHRa" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <section id="about" class="section">
+      <div class="container">
+        <h2 class="section-title">About</h2>
+        <p class="lead">
+          I'm AMAN MISHRa. I enjoy transforming ideas into delightful, reliable user interfaces.
+          I care about performance, accessibility, and maintainable code. When I am not coding,
+          I explore new tools and sharpen core fundamentals.
+        </p>
+        <div class="about-cards">
+          <div class="card">
+            <h3>What I do</h3>
+            <p>Front‑end development, responsive UI, component libraries, and modern JavaScript.</p>
+          </div>
+          <div class="card">
+            <h3>How I work</h3>
+            <p>Design‑driven development, thoughtful naming, strong semantics, and clear structure.</p>
+          </div>
+          <div class="card">
+            <h3>What I value</h3>
+            <p>Clarity, accessibility, performance, and iterative improvement over time.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills" class="section alt">
+      <div class="container">
+        <h2 class="section-title">Skills</h2>
+        <ul class="skill-list" aria-label="Technical skills">
+          <li class="chip">HTML5</li>
+          <li class="chip">CSS3</li>
+          <li class="chip">JavaScript</li>
+          <li class="chip">Responsive Design</li>
+          <li class="chip">Git & GitHub</li>
+          <li class="chip">Linux</li>
+          <li class="chip">Accessibility</li>
+          <li class="chip">Performance</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="projects" class="section">
+      <div class="container">
+        <h2 class="section-title">Projects</h2>
+        <div class="projects-grid">
+          <article class="project-card">
+            <div class="project-media gradient one" role="img" aria-label="Project visual placeholder"></div>
+            <div class="project-body">
+              <h3 class="project-title">Project One</h3>
+              <p class="project-desc">A modern landing page with responsive layout and smooth interactions.</p>
+              <ul class="tag-list">
+                <li class="chip sm">HTML</li>
+                <li class="chip sm">CSS</li>
+                <li class="chip sm">JS</li>
+              </ul>
+              <div class="project-actions">
+                <a class="link" href="aman.html" aria-label="Open Project One">Open</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-media gradient two" role="img" aria-label="Project visual placeholder"></div>
+            <div class="project-body">
+              <h3 class="project-title">Project Two</h3>
+              <p class="project-desc">Reusable components and clean design system foundations.</p>
+              <ul class="tag-list">
+                <li class="chip sm">Components</li>
+                <li class="chip sm">Design</li>
+                <li class="chip sm">UX</li>
+              </ul>
+              <div class="project-actions">
+                <a class="link" href="Assigment5.html" aria-label="Open Project Two">Open</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-media gradient three" role="img" aria-label="Project visual placeholder"></div>
+            <div class="project-body">
+              <h3 class="project-title">Project Three</h3>
+              <p class="project-desc">Accessibility‑first interface with keyboard and screen‑reader support.</p>
+              <ul class="tag-list">
+                <li class="chip sm">A11y</li>
+                <li class="chip sm">Semantic HTML</li>
+                <li class="chip sm">WAI‑ARIA</li>
+              </ul>
+              <div class="project-actions">
+                <a class="link" href="todo.html" aria-label="Open Project Three">Open</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section alt">
+      <div class="container">
+        <h2 class="section-title">Contact</h2>
+        <p class="lead">Want to collaborate or have an opportunity? Let’s talk.</p>
+        <div class="contact-card">
+          <div class="contact-row">
+            <span>Email</span>
+            <a class="link" href="mailto:your-email@example.com?subject=Hello%20AMAN%20MISHRa">your-email@example.com</a>
+          </div>
+          <div class="contact-row">
+            <span>Location</span>
+            <span>India</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <p>© <span id="year"></span> AMAN MISHRa. All rights reserved.</p>
+        <a class="link" href="#home">Back to top ↑</a>
+      </div>
+    </footer>
+  </body>
+</html>
