@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>To‑Do List</title>
+  <style>
+    :root {
+      --bg: #0f172a;            /* slate-900 */
+      --panel: #111827;         /* gray-900 */
+      --muted: #9ca3af;         /* gray-400 */
+      --text: #e5e7eb;          /* gray-200 */
+      --primary: #22d3ee;       /* cyan-400 */
+      --primary-700: #0e7490;   /* cyan-700 */
+      --accent: #a78bfa;        /* violet-400 */
+      --danger: #f87171;        /* red-400 */
+      --ok: #34d399;            /* emerald-400 */
+      --border: #1f2937;        /* gray-800 */
+      --shadow: 0 10px 25px rgba(0,0,0,0.35);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font: 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% -10%, #1e293b 0%, transparent 60%),
+        radial-gradient(1400px 900px at 120% 0%, #0b1020 0%, transparent 60%),
+        var(--bg);
+    }
+
+    .app {
+      max-width: 820px;
+      margin: min(6vh, 48px) auto;
+      padding: 24px clamp(16px, 4vw, 32px) 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(24px, 3.6vw, 36px);
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h1 .dot { color: var(--accent); }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 0 0 18px;
+      font-size: 14px;
+    }
+
+    /* New task form */
+    #new-task-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin: 16px 0 12px;
+    }
+    #new-task-input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #0b1220;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    #new-task-input:focus {
+      border-color: color-mix(in oklab, var(--primary) 40%, white 0%);
+      box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 25%, transparent 75%);
+    }
+    .btn-primary {
+      padding: 12px 16px;
+      border: 1px solid color-mix(in oklab, var(--primary) 45%, black 0%);
+      background: linear-gradient(180deg, color-mix(in oklab, var(--primary) 20%, #0b1220 80%), #07111b);
+      color: #e6fbff;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .06s ease, filter .15s ease;
+    }
+    .btn-primary:hover { filter: brightness(1.06); }
+    .btn-primary:active { transform: translateY(1px) scale(0.997); }
+
+    /* Controls row */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      align-items: center;
+      justify-content: space-between;
+      margin: 8px 0 6px;
+    }
+    .filters {
+      display: inline-flex;
+      gap: 6px;
+      padding: 4px;
+      background: #0b1220;
+      border: 1px solid var(--border);
+      border-radius: 1000px;
+    }
+    .filter-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 8px 12px;
+      border-radius: 1000px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .filter-btn[aria-pressed="true"] {
+      color: #081217;
+      background: var(--primary);
+    }
+
+    .meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .btn-link {
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 8px;
+    }
+    .btn-link:hover { text-decoration: underline; }
+    .btn-link:disabled { opacity: .5; cursor: not-allowed; text-decoration: none; }
+
+    /* Task list */
+    #task-list {
+      list-style: none;
+      padding: 0;
+      margin: 14px 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 48px;
+    }
+    .task-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 12px;
+      border: 1px solid var(--border);
+      background: #0b1220;
+      border-radius: 12px;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset;
+    }
+    .task-item.dragging { opacity: 0.6; outline: 2px dashed var(--primary); }
+
+    .task-handle {
+      cursor: grab;
+      user-select: none;
+      color: var(--muted);
+      padding: 6px 8px;
+      border-radius: 8px;
+    }
+    .task-handle:active { cursor: grabbing; }
+
+    .task-check {
+      width: 18px; height: 18px;
+      accent-color: var(--ok);
+      cursor: pointer;
+    }
+
+    .task-text {
+      min-width: 0; /* allow ellipsis */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .task-text.completed { color: #6b7280; text-decoration: line-through; }
+
+    .task-actions { display: inline-flex; gap: 6px; }
+    .icon-btn {
+      border: 1px solid var(--border);
+      background: #0b1220;
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .icon-btn:hover { filter: brightness(1.1); }
+    .icon-btn--danger { color: #ffd5d5; border-color: #3b1111; background: linear-gradient(180deg, #2a0b0b, #1b0a0a); }
+
+    .edit-input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #0b1220;
+      color: var(--text);
+      outline: none;
+    }
+
+    .empty-state {
+      color: var(--muted);
+      text-align: center;
+      padding: 20px 8px 8px;
+      font-size: 14px;
+    }
+
+    .footnote {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 520px) {
+      .task-item { grid-template-columns: auto 1fr; }
+      .task-actions { grid-column: 1 / -1; justify-content: flex-end; }
+      .meta { width: 100%; justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" aria-labelledby="title">
+    <h1 id="title">To‑Do <span class="dot">●</span> List</h1>
+    <p class="subtitle">Add tasks, mark complete, edit, delete, filter, and drag to reorder. Your list is saved locally.</p>
+
+    <form id="new-task-form" autocomplete="off">
+      <input id="new-task-input" name="task" type="text" placeholder="Add a new task and press Enter…" aria-label="New task" required />
+      <button class="btn-primary" type="submit" aria-label="Add task">Add</button>
+    </form>
+
+    <section class="controls" aria-label="List controls">
+      <div class="filters" role="tablist" aria-label="Filters">
+        <button class="filter-btn" role="tab" data-filter="all" aria-pressed="true">All</button>
+        <button class="filter-btn" role="tab" data-filter="active" aria-pressed="false">Active</button>
+        <button class="filter-btn" role="tab" data-filter="completed" aria-pressed="false">Completed</button>
+      </div>
+      <div class="meta">
+        <span id="items-left" aria-live="polite">0 items left</span>
+        <button id="clear-completed" class="btn-link" type="button" disabled>Clear completed</button>
+      </div>
+    </section>
+
+    <ul id="task-list" role="list" aria-live="polite"></ul>
+    <div id="empty-state" class="empty-state" hidden>No tasks yet — add your first one!</div>
+
+    <p class="footnote">Drag the handle, or the item itself, to reorder. Double‑click a task to edit.</p>
+  </main>
+
+  <script>
+    (function() {
+      'use strict';
+
+      const STORAGE_KEY = 'todo:tasks:v1';
+      const FILTER_KEY = 'todo:filter:v1';
+
+      /** @typedef {{ id: string, title: string, completed: boolean, createdAt: number }} Task */
+
+      /** @type {Task[]} */
+      let tasks = [];
+      /** @type {'all'|'active'|'completed'} */
+      let currentFilter = loadFilter();
+
+      // Elements
+      const form = document.getElementById('new-task-form');
+      const input = document.getElementById('new-task-input');
+      const list = document.getElementById('task-list');
+      const itemsLeft = document.getElementById('items-left');
+      const clearCompletedBtn = document.getElementById('clear-completed');
+      const filterButtons = Array.from(document.querySelectorAll('.filter-btn'));
+      const emptyState = document.getElementById('empty-state');
+
+      function generateId() {
+        if (crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+        return 't_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      }
+
+      function loadTasks() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return [];
+          const parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed)) return [];
+          return parsed.filter(Boolean).map(x => ({
+            id: String(x.id ?? generateId()),
+            title: String(x.title ?? ''),
+            completed: Boolean(x.completed),
+            createdAt: Number(x.createdAt ?? Date.now()),
+          }));
+        } catch (e) {
+          console.warn('Failed to load tasks:', e);
+          return [];
+        }
+      }
+
+      function saveTasks() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        } catch (e) {
+          console.warn('Failed to save tasks:', e);
+        }
+      }
+
+      function loadFilter() {
+        const f = localStorage.getItem(FILTER_KEY);
+        return (f === 'active' || f === 'completed') ? f : 'all';
+      }
+
+      function saveFilter() {
+        localStorage.setItem(FILTER_KEY, currentFilter);
+      }
+
+      function setFilter(filter) {
+        if (currentFilter === filter) return;
+        currentFilter = filter;
+        saveFilter();
+        for (const btn of filterButtons) {
+          const on = btn.getAttribute('data-filter') === currentFilter;
+          btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        }
+        render();
+      }
+
+      function addTask(title) {
+        const trimmed = String(title).trim();
+        if (!trimmed) return;
+        tasks.unshift({ id: generateId(), title: trimmed, completed: false, createdAt: Date.now() });
+        saveTasks();
+        render();
+      }
+
+      function toggleTask(id) {
+        const t = tasks.find(t => t.id === id);
+        if (!t) return;
+        t.completed = !t.completed;
+        saveTasks();
+        render();
+      }
+
+      function deleteTask(id) {
+        const before = tasks.length;
+        tasks = tasks.filter(t => t.id !== id);
+        if (tasks.length !== before) {
+          saveTasks();
+          render();
+        }
+      }
+
+      function editTask(id, newTitle) {
+        const t = tasks.find(t => t.id === id);
+        if (!t) return;
+        const trimmed = String(newTitle).trim();
+        if (!trimmed) {
+          // If user clears the title, delete the task
+          deleteTask(id);
+          return;
+        }
+        if (trimmed === t.title) return; // no change
+        t.title = trimmed;
+        saveTasks();
+        render();
+      }
+
+      function clearCompleted() {
+        const anyCompleted = tasks.some(t => t.completed);
+        if (!anyCompleted) return;
+        tasks = tasks.filter(t => !t.completed);
+        saveTasks();
+        render();
+      }
+
+      function applyFilter(list) {
+        if (currentFilter === 'active') return list.filter(t => !t.completed);
+        if (currentFilter === 'completed') return list.filter(t => t.completed);
+        return list;
+      }
+
+      function updateMeta() {
+        const left = tasks.filter(t => !t.completed).length;
+        itemsLeft.textContent = `${left} item${left === 1 ? '' : 's'} left`;
+        clearCompletedBtn.disabled = !tasks.some(t => t.completed);
+      }
+
+      function updateEmptyState(visible) {
+        emptyState.hidden = !visible;
+      }
+
+      function createTaskElement(task) {
+        const li = document.createElement('li');
+        li.className = 'task-item';
+        li.draggable = true;
+        li.dataset.id = task.id;
+        li.setAttribute('aria-label', task.title);
+
+        const handle = document.createElement('span');
+        handle.className = 'task-handle';
+        handle.title = 'Drag to reorder';
+        handle.textContent = '⠿';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'task-check';
+        checkbox.checked = task.completed;
+        checkbox.setAttribute('aria-label', 'Toggle completed');
+        checkbox.addEventListener('change', () => toggleTask(task.id));
+
+        const text = document.createElement('div');
+        text.className = 'task-text' + (task.completed ? ' completed' : '');
+        text.textContent = task.title;
+        text.title = 'Double‑click to edit';
+        text.addEventListener('dblclick', () => beginInlineEdit(li, task));
+
+        // Actions
+        const actions = document.createElement('div');
+        actions.className = 'task-actions';
+        const editBtn = document.createElement('button');
+        editBtn.className = 'icon-btn';
+        editBtn.type = 'button';
+        editBtn.setAttribute('aria-label', 'Edit task');
+        editBtn.textContent = 'Edit';
+        editBtn.addEventListener('click', () => beginInlineEdit(li, task));
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'icon-btn icon-btn--danger';
+        delBtn.type = 'button';
+        delBtn.setAttribute('aria-label', 'Delete task');
+        delBtn.textContent = 'Delete';
+        delBtn.addEventListener('click', () => deleteTask(task.id));
+
+        actions.append(editBtn, delBtn);
+
+        li.append(handle, checkbox, text, actions);
+
+        // Drag and drop
+        li.addEventListener('dragstart', ev => {
+          li.classList.add('dragging');
+          ev.dataTransfer.effectAllowed = 'move';
+          // For Firefox compatibility
+          ev.dataTransfer.setData('text/plain', task.id);
+        });
+        li.addEventListener('dragend', () => {
+          li.classList.remove('dragging');
+        });
+
+        return li;
+      }
+
+      function beginInlineEdit(li, task) {
+        // Avoid creating multiple editors
+        if (li.querySelector('input.edit-input')) return;
+        const currentTextEl = li.querySelector('.task-text');
+        if (!currentTextEl) return;
+
+        const inputEl = document.createElement('input');
+        inputEl.type = 'text';
+        inputEl.className = 'edit-input';
+        inputEl.value = task.title;
+        inputEl.setAttribute('aria-label', 'Edit task');
+
+        const actions = li.querySelector('.task-actions');
+        const checkbox = li.querySelector('.task-check');
+
+        currentTextEl.replaceWith(inputEl);
+        inputEl.focus();
+        inputEl.select();
+
+        function commit() {
+          editTask(task.id, inputEl.value);
+        }
+        function cancel() {
+          render();
+        }
+
+        inputEl.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') commit();
+          if (e.key === 'Escape') cancel();
+        });
+        inputEl.addEventListener('blur', commit);
+
+        // Temporarily disable checkbox while editing to prevent accidental toggles
+        if (checkbox) checkbox.disabled = true;
+        if (actions) actions.style.pointerEvents = 'none';
+      }
+
+      // Compute the element after which the dragged item should be inserted
+      function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.task-item:not(.dragging)')];
+        return draggableElements.reduce((closest, child) => {
+          const box = child.getBoundingClientRect();
+          const offset = y - box.top - box.height / 2;
+          if (offset < 0 && offset > closest.offset) {
+            return { offset, element: child };
+          } else {
+            return closest;
+          }
+        }, { offset: Number.NEGATIVE_INFINITY, element: null }).element;
+      }
+
+      function enableReorder() {
+        list.addEventListener('dragover', e => {
+          e.preventDefault();
+          const afterElement = getDragAfterElement(list, e.clientY);
+          const dragging = list.querySelector('.dragging');
+          if (!dragging) return;
+          if (afterElement == null) {
+            list.appendChild(dragging);
+          } else {
+            list.insertBefore(dragging, afterElement);
+          }
+        });
+
+        list.addEventListener('drop', () => {
+          // Persist new order based on DOM
+          const idsInOrder = Array.from(list.children).map(li => li.dataset.id);
+          if (idsInOrder.length !== tasks.length) return;
+          const map = new Map(tasks.map(t => [t.id, t]));
+          tasks = idsInOrder.map(id => map.get(id)).filter(Boolean);
+          saveTasks();
+          render();
+        });
+      }
+
+      function render() {
+        // Clear list
+        list.innerHTML = '';
+
+        const filtered = applyFilter(tasks);
+        for (const t of filtered) {
+          list.appendChild(createTaskElement(t));
+        }
+
+        updateMeta();
+        updateEmptyState(filtered.length === 0);
+      }
+
+      // Wire up UI
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        addTask(input.value);
+        input.value = '';
+        input.focus();
+      });
+
+      clearCompletedBtn.addEventListener('click', clearCompleted);
+
+      for (const btn of filterButtons) {
+        btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+      }
+
+      // Initial load
+      tasks = loadTasks();
+      // Respect saved filter on initial paint
+      for (const btn of filterButtons) {
+        const on = btn.getAttribute('data-filter') === currentFilter;
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      }
+
+      enableReorder();
+      render();
+    })();
+  </script>
+</body>
+</html>
